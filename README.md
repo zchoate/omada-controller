@@ -1,3 +1,6 @@
+# Fork of mbentley/docker-omada-controller
+Add in docker-compose-build.yaml to build from Ubuntu 20.04 base image.
+
 # mbentley/omada-controller
 
 docker image based off of ubuntu:18.04 for [TP-Link Omada Controller](https://www.tp-link.com/us/business-networking/omada-sdn-controller/) to control [TP-Link Omada Hardware](https://www.tp-link.com/en/business-networking/all-omada/)
