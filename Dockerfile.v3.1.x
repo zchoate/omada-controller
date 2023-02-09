@@ -1,6 +1,9 @@
 # rebased/repackaged base image that only updates existing packages
 FROM mbentley/ubuntu:18.04
 LABEL maintainer="Matt Bentley <mbentley@mbentley.net>"
+LABEL org.opencontainers.image.source="https://github.com/mbentley/docker-omada-controller"
+
+ARG INSTALL_VER=3.1
 
 # install runtime dependencies
 RUN apt-get update &&\
@@ -9,7 +12,7 @@ RUN apt-get update &&\
 
 # install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
 RUN cd /tmp &&\
-  wget https://static.tp-link.com/2019/201905/20190527/Omada_Controller_v3.1.13_linux_x64.tar.gz &&\
+  wget -nv "https://static.tp-link.com/2019/201905/20190527/Omada_Controller_v3.1.13_linux_x64.tar.gz" &&\
   tar zxvf Omada_Controller_v3.1.13_linux_x64.tar.gz &&\
   rm Omada_Controller_v3.1.13_linux_x64.tar.gz &&\
   cd Omada_Controller_* &&\
@@ -34,7 +37,8 @@ RUN cd /tmp &&\
 
 # patch log4j vulnerability
 COPY log4j_patch.sh /log4j_patch.sh
-RUN /log4j_patch.sh
+RUN /log4j_patch.sh &&\
+  rm /log4j_patch.sh
 
 USER omada
 WORKDIR /opt/tplink/EAPController

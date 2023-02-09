@@ -1,22 +1,21 @@
+# rebased/repackaged base image that only updates existing packages
 ARG BASE=mbentley/ubuntu:18.04
 FROM ${BASE}
-
 LABEL maintainer="Matt Bentley <mbentley@mbentley.net>"
+LABEL org.opencontainers.image.source="https://github.com/mbentley/docker-omada-controller"
 
-ARG OMADA_VER=4.2.11
-ARG OMADA_TAR="Omada_SDN_Controller_v${OMADA_VER}_linux_x64.tar.gz"
-ARG OMADA_URL="https://static.tp-link.com/2021/202102/20210209/${OMADA_TAR}"
+COPY healthcheck.sh install.sh log4j_patch.sh /
+
 # valid values: amd64 (default) | arm64 | armv7l
 ARG ARCH=amd64
 
-COPY install.sh healthcheck.sh /
+# install version (major.minor only); OMADA_URL set in install.sh
+ARG INSTALL_VER="4.4"
 
-# install omada controller (instructions taken from install.sh); then create a user & group and set the appropriate file system permissions
-RUN /install.sh && rm /install.sh
-
-# patch log4j vulnerability
-COPY log4j_patch.sh /log4j_patch.sh
-RUN /log4j_patch.sh
+# install omada controller (instructions taken from install.sh) & patch log4j, if applicable
+RUN /install.sh &&\
+  /log4j_patch.sh &&\
+  rm /install.sh /log4j_patch.sh
 
 COPY entrypoint-4.x.sh /entrypoint.sh
 
